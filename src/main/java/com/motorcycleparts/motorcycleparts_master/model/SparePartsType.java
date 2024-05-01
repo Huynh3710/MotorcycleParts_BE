@@ -1,6 +1,7 @@
 package com.motorcycleparts.motorcycleparts_master.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +22,9 @@ public class SparePartsType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
+    private String image;
 
     @OneToMany(mappedBy = "sparePartsType")
+    @JsonIgnore
     private List<SpareParts> spareParts;
 }

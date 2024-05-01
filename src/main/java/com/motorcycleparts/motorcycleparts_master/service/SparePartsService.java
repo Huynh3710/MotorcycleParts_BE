@@ -9,6 +9,7 @@ import java.util.List;
 public interface SparePartsService {
     List<SparePartsDto> getAllParts();
     SparePartsDto getSparePartsById(Long id);
-
     List<SparePartsDto> getSparePartsByBrandId(Long id);
+
+    List<SparePartsDto> getSparePartsByTypeId(Long id);
 }

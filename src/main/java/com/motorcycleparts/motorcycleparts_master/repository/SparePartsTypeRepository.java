@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SparePartsTypeRepository extends JpaRepository<SparePartsType,Long> {
+    boolean existsByName(String name);
 }

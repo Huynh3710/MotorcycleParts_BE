@@ -1,6 +1,7 @@
 package com.motorcycleparts.motorcycleparts_master.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +18,11 @@ public class BrandParts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
+    private String image;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "brandParts")
-//    @JsonIgnore
     List<SpareParts> spareParts;
 
 }

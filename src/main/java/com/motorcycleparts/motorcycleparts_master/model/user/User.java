@@ -1,5 +1,6 @@
 package com.motorcycleparts.motorcycleparts_master.model.user;
 
+import com.motorcycleparts.motorcycleparts_master.model.Customer;
 import com.motorcycleparts.motorcycleparts_master.token.Token;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,17 +24,25 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Long id;
-    private String firstName;
-    private String lastName;
+//    private String firstName;
+//    private String lastName;
     @Column(unique = true)
     private String email;
+    @Column(unique = true)
+    private String phoneNumber;
     private String password;
-
+//    private String sex;
+    @Column(length = 10000)
+//    private String avatar;
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+
+//    @OneToOne
+//    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+//    private Customer customer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,4 +78,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

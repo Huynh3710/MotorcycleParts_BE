@@ -1,6 +1,9 @@
 package com.motorcycleparts.motorcycleparts_master.Dto;
 
+import com.motorcycleparts.motorcycleparts_master.model.Discount;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -8,17 +11,27 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SparePartsDto {
-
     private Long id;
     private String name;
-    private Long sellNumber;
+    private int sellNumber;
     private String description;
-    private Double unitPrice;
+    private float unitPrice;
     private String image;
-    //số lượng còn lại
-    private Long quantityRe;
+    private float weight;
+    private String size;
+    private float averageLifespan;
+    private Float wattage;
+    private Float voltage;
+    private String type;
+    private int year;
+    private String origin;
+    private int inventory;
     private float start;
+    private Float warranty;
+    private String iso;
+    private String status;
+    private String brandMotor;
     private SparePartsTypeDto sparePartsType;
-    private BrandPartsDto brandPartsDto;
-
+    private BrandPartsDto brandParts;
+    private DiscountDto discount;
 }

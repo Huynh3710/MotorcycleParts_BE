@@ -17,6 +17,11 @@ public class AuthenticationResponse {
     private String access_token;
     @JsonProperty("refresh_token")
     private String refresh_token;
-    private Long id;
+    private Long userId;
+    private String role;
+    private Long cartId;
+//    private String userId;
+    private String message;
+    private Long customerId;
 
 }

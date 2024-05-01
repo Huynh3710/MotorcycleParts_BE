@@ -1,11 +1,13 @@
 package com.motorcycleparts.motorcycleparts_master.model;
 
-public enum OrderState {
+public enum Status {
     PENDING,
+    //xác nhận đơn hàng
     CAPTURED,
+    PREPARING,
     SHIPMENT,
     DELIVERED,
-    CANCELED,
-    RETURNED
+    CANCELLED,
+    REFUNDED
 
 }

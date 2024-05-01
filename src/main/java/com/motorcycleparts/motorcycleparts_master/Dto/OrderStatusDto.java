@@ -14,13 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderStatus {
-
+public class OrderStatusDto {
     private long id;
-
-
     private Status status;
-
-
-    private List<Order> orders = new ArrayList<>();
 }

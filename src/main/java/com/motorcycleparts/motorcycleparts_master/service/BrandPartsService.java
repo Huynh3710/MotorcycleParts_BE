@@ -2,17 +2,21 @@ package com.motorcycleparts.motorcycleparts_master.service;
 
 import com.motorcycleparts.motorcycleparts_master.model.BrandParts;
 import com.motorcycleparts.motorcycleparts_master.repository.BrandPartsRepository;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BrandPartsService {
-    BrandPartsRepository brandPartsRepository;
+    private final BrandPartsRepository brandPartsRepository;
+    BrandPartsService brandPartsService;
 
-   List<BrandParts> getAllBrandParts (){
-        return brandPartsRepository.findAll();
+   public List<BrandParts> getAllBrandParts (){
+
+       return brandPartsRepository.findAll();
     }
+
 
 }

@@ -6,17 +6,22 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
     database: mysql
+  servlet:
+    multipart:
+      max-file-size: 20MB # Kích thước tối đa cho mỗi tệp
+      max-request-size: 20MB # Kích thước tối đa cho mỗi request
+      enabled: true
 #    database-platform:
 application:
   security:
     jwt:
-      secret-key: 656e74657220796f7572207068726173652068657265
+      secret-key: 786f73577c6b3b4c7265585b5a497d252441422b6c24654455223e21623d626d
       expiration: 86400000 #a day
       refresh-token:
         expiration: 604800000 # 7 day
@@ -27,3 +32,7 @@ logging:
       springframework:
         security=DEBUG:
     web=DEBUG:
+paypal:
+  client-id: AQa9pPU77zfuBeTlm3RkB3p-eY52qbi9Y5nqyHgNy_mW-gB8eaFW5Tn1JLj0AfiG25PE4sgphJQwYjsD
+  client-secret: EA_jHAG4_ZUslgpa2g7U1UwDXwxaIX2tqTcbrCJiLu9DXxtlxEsEZDgzum9_G4wbM3KHHDwqSuaqzdCd
+  mode: sandbox # Use #sandbox for testing and 'live' for production

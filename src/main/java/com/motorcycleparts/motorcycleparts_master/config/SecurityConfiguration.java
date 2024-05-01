@@ -28,32 +28,26 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-
                                 //user kh có tk
                                 .requestMatchers("/api/v1/authentication/**").permitAll()
                                 .requestMatchers("/get-api/**").permitAll()
+                                .requestMatchers("/api/v1/user-payment/**").permitAll()
                                 // 2 người admin và manager vòa được endpoint
                                 .requestMatchers("/api/v1/demo-management/**").hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
-
                                 .requestMatchers(GET, "/api/v1/demo-management/**").hasAnyAuthority(Permission.ADMIN_READ.name(), Permission.MANAGER_READ.name())
                                 .requestMatchers(POST, "/api/v1/demo-management/**").hasAnyAuthority(Permission.ADMIN_CREATE.name(), Permission.MANAGER_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/demo-management/**").hasAnyAuthority(Permission.ADMIN_UPDATE.name(), Permission.MANAGER_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/demo-management/**").hasAnyAuthority(Permission.ADMIN_DELETE.name(), Permission.MANAGER_DELETE.name())
-
-
                                 //chỉ có admin mới truy cập được
                                 .requestMatchers("/api/v1/demo-admin/**").hasRole(Role.ADMIN.name())
-
                                 .requestMatchers(GET, "/api/v1/demo-admin/**").hasAuthority(Permission.ADMIN_READ.name())
                                 .requestMatchers(POST, "/api/v1/demo-admin/**").hasAuthority(Permission.ADMIN_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/demo-admin/**").hasAuthority(Permission.ADMIN_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/demo-admin/**").hasAuthority(Permission.ADMIN_DELETE.name())
-
                                 //user có tk (gọi khi đăng nhập (để bất cứ endpoint nào cũng được))
                                 .anyRequest().authenticated()
                 )
@@ -63,11 +57,11 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(httpSecurityLogoutConfigurer ->
                         httpSecurityLogoutConfigurer
-                                .logoutUrl("/api/v1/authentication/logout")
+//                                .logoutUrl("/api/v1/authentication/logout")
+                                .logoutUrl("/get-api/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) ->
                                         SecurityContextHolder.clearContext()));
-
         return http.build();
     }
 }
