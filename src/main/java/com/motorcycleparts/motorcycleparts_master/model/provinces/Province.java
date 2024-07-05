@@ -1,6 +1,7 @@
 package com.motorcycleparts.motorcycleparts_master.model.provinces;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,12 +35,17 @@ public class Province {
     @Column(name = "code_name")
     private String codeName;
 
+    @JoinColumn
+    private Double shippingRate;
+
     @ManyToOne
     @JoinColumn(name = "administrative_unit_id")
+    @JsonIgnore
     private AdministrativeUnit administrativeUnit;
 
     @ManyToOne
     @JoinColumn(name = "administrative_region_id")
+    @JsonIgnore
     private AdministrativeRegion administrativeRegion;
     @JsonCreator
     public Province(@JsonProperty("code") String code, @JsonProperty("name") String name) {

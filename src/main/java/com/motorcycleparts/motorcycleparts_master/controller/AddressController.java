@@ -45,11 +45,6 @@ public class AddressController {
     @GetMapping("/get-addresses-by-customer-id/{customerId}")
     public ResponseEntity<List<Address>> getAddressesByCustomerId(@PathVariable Long customerId) {
         System.out.println("customer id: "+customerId);
-//        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-//        if (customerOptional.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//        Customer customer = customerOptional.get();
         Customer customer = customerRepository.findById(customerId).orElseThrow();
         return ResponseEntity.ok(customer.getAddresses());
     }

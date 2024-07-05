@@ -68,6 +68,7 @@ public class AuthenticationService {
                 .email(registerRequest.getEmail())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .isLocked(false)
                 .role(registerRequest.getRole() == null ? Role.USER : registerRequest.getRole())
                 .build();
 

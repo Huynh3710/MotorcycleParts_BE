@@ -27,12 +27,14 @@ public class Discount {
     private String name;
     private String description;
     private int discount;
+    private int tempDiscount;
+    private boolean isActive; // Trường mới để lưu trữ trạng thái của Discount// Trường mới để lưu trữ danh sách SpareParts được giảm giá
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "discount", fetch = FetchType.EAGER)
 //    @JoinColumn(name = "spare_parts_id")
     @JsonIgnore
     private List<SpareParts> spareParts;

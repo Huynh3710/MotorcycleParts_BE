@@ -11,6 +11,8 @@ import com.motorcycleparts.motorcycleparts_master.repository.Parts_MotorTypeRepo
 import com.motorcycleparts.motorcycleparts_master.repository.SparePartsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,4 +51,11 @@ public class SparePartsServiceImpl implements SparePartsService{
         List<SpareParts> spareParts = sparePartsRepository.findSparePartsBySparePartsTypeId(id);
         return spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList());
     }
+
+    @Override
+    public Page<SparePartsDto> getAllPartsPages(Pageable page) {
+        Page<SpareParts> spareParts = sparePartsRepository.findAll(page);
+        return spareParts.map(mapperSpareParts::mapTo);
+    }
+
 }

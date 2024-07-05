@@ -73,13 +73,25 @@ public class OrderService {
             orderDetailsList.add(orderDetail);
             orderDetailRepository.save(orderDetail);
         }
+
+        double shippingRate = 0.0;
+        if (paymentRequest.getShippingFee() != null) {
+            shippingRate = paymentRequest.getShippingFee();
+        } else {
+            shippingRate = 0.0;
+        }
+        System.out.println("shippingRate: " + shippingRate);
+//        double Amount = orderDetailsList.stream().mapToDouble(orderDetail -> orderDetail.getPrice() * orderDetail.getQuantity()).sum();
+//        Amount = Math.round(Amount * 10.0) / 10.0;
         double Amount = orderDetailsList.stream().mapToDouble(orderDetail -> orderDetail.getPrice() * orderDetail.getQuantity()).sum();
+        Amount += shippingRate; // Trừ phí ship ra khỏi tổng số tiền
         Amount = Math.round(Amount * 10.0) / 10.0;
+
         order.setOrderCode(orderId);
         order.setAmountPrice(Amount);
         order.setOrderDate(new Date());
         order.setCustomer(customer);
-        order.setShipping(10000);
+        order.setShipping(shippingRate);
         order.setOrderStatus(orderStatus);
         order.setAddress(address);
         order.setPayment(payment);

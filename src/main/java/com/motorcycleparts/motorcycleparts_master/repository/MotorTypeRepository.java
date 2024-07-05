@@ -18,4 +18,5 @@ public interface MotorTypeRepository extends JpaRepository<MotorType, Long> {
         Boolean existsByName(String name);
 
         List<MotorType> findByBrandMotor_Id(Long id);
+        List<MotorType> findMotorTypeByNameContaining(String keyword);
 }

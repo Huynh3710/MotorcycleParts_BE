@@ -11,5 +11,9 @@ public interface ProvinceRepository extends JpaRepository<Province,Long> {
 
     //get all province by code
     Province findProvinceByCode(String code);
+    List<Province> findByShippingRateIsNotNull();
 
+    Province findProvinceByFullName(String fullName);
+
+    List<Province> findProvinceByFullNameContaining(String keyword);
 }

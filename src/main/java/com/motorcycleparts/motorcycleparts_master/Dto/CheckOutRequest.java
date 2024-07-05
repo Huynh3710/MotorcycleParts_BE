@@ -16,5 +16,6 @@ public class CheckOutRequest {
     private long customerId;
     private String currency;
     private float amount;
+    private Double shippingFee;
     private List<Long> orderDetailsId;
 }

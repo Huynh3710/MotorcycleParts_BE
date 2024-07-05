@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -22,21 +23,43 @@ public class DiscountService {
 //    @Scheduled(fixedRate = 60000)
 //    public void checkDiscounts() {
 //        System.out.println("Checking discounts");
+//        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 //        List<Discount> discounts = discountRepository.findAll();
-//        LocalDateTime now = LocalDateTime.now();
+//
 //        for (Discount discount : discounts) {
-//            if (discount.getEndDate().isBefore(now)) {
-//                List<SpareParts> sparePartsList = discount.getSpareParts();
-//                if (sparePartsList != null) {
-//                    for (SpareParts part : sparePartsList) {
-//                        part.setDiscount(null);
-//                        sparePartsRepository.save(part);
-//                    }
-//                }
-//                discount.setSpareParts(null);
+//            if (!discount.isActive() && !discount.getStartDate().isAfter(now)) {
+//                discount.setActive(true);
+//                discount.setDiscount(discount.getTempDiscount());
 //                discountRepository.save(discount);
-//                discountRepository.delete(discount);
+//            }
+//            if (discount.getEndDate().isBefore(now)) {
+//                discount.setActive(false);
+//                discount.setDiscount(0);
+//                discountRepository.save(discount);
 //            }
 //        }
 //    }
+@Scheduled(cron = "0 * * * * *")
+public void checkDiscounts() {
+    System.out.println("Checking discounts");
+    LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    List<Discount> discounts = discountRepository.findAll();
+
+    for (Discount discount : discounts) {
+        if (!discount.isActive() && !discount.getStartDate().isAfter(now)) {
+            discount.setActive(true);
+            discount.setDiscount(discount.getTempDiscount());
+            discountRepository.save(discount);
+        }
+        if (discount.getEndDate().isBefore(now) || discount.getEndDate().isEqual(now)) {
+            discount.setActive(false);
+            discount.setDiscount(0);
+            discountRepository.save(discount);
+        }
+    }
+}
+
+
+
+
 }

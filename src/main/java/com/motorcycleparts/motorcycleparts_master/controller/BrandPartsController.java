@@ -165,5 +165,28 @@ public class BrandPartsController {
         }
     }
 
+    //search brand parts by name
+//    @GetMapping("/search-brand-parts-by-name/{name}")
+//    public ResponseEntity<List<BrandParts>> searchBrandPartsByName(@PathVariable("name") String name) {
+//        List<BrandParts> brandParts;
+//        if (name == null || name.isEmpty()) {
+//            brandParts = brandPartsRepository.findAll();
+//        } else {
+//            brandParts = brandPartsRepository.findBrandPartsByNameContaining(name);
+//        }
+//        return ResponseEntity.ok(brandParts);
+//    }
+    @GetMapping("/search-brand-parts-by-name")
+    public ResponseEntity<List<BrandParts>> searchBrandPartsByName(@RequestParam(value = "name", required = false) String name) {
+        List<BrandParts> brandParts;
+
+        if (name == null || name.isEmpty()) {
+            brandParts = brandPartsRepository.findAll();
+        } else {
+            brandParts = brandPartsRepository.findBrandPartsByNameContaining(name);
+        }
+        return ResponseEntity.ok(brandParts);
+    }
+
 
 }

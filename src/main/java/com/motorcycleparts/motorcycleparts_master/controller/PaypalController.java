@@ -260,7 +260,7 @@ public class PaypalController {
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        System.out.println(captureId);
         HttpEntity<?> entity = new HttpEntity<String>(null, headers);
 
         ResponseEntity<Object> response = restTemplate.exchange(
@@ -279,7 +279,9 @@ public class PaypalController {
             return "Unavailable to get CREATE A REFUND, STATUS CODE " + response.getStatusCode();
         }
 
+
     }
+
 
 
 }

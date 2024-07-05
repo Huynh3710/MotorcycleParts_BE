@@ -4,6 +4,7 @@ package com.motorcycleparts.motorcycleparts_master.controller;
 import com.motorcycleparts.motorcycleparts_master.Dto.SparePartsDto;
 import com.motorcycleparts.motorcycleparts_master.mapper.MapperSparePartsImpl;
 import com.motorcycleparts.motorcycleparts_master.model.MotorType;
+import com.motorcycleparts.motorcycleparts_master.model.Parts_MotorType;
 import com.motorcycleparts.motorcycleparts_master.model.SpareParts;
 import com.motorcycleparts.motorcycleparts_master.model.SparePartsType;
 import com.motorcycleparts.motorcycleparts_master.repository.Parts_MotorTypeRepository;
@@ -13,6 +14,8 @@ import com.motorcycleparts.motorcycleparts_master.service.SparePartsService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,8 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -46,6 +48,7 @@ public class SparePartsController {
     private final Parts_MotorTypeRepository parts_motorTypeRepository;
 
     private final SparePartsTypeRepository sparePartsTypeRepository;
+
 
     @PutMapping("/add-product")
     public ResponseEntity<SpareParts> addProduct (@RequestBody SpareParts spareParts){
@@ -69,6 +72,11 @@ public class SparePartsController {
     }
 
 
+    @GetMapping("/get-api/spare-parts/get-all-parts-pages")
+    public ResponseEntity<Page<SparePartsDto>> getAllPartsPages(Pageable page){
+        return ResponseEntity.ok(sparePartsService.getAllPartsPages(page));
+    }
+
     @GetMapping("/get-spare-parts-by-moto-type-id={id}")
     public ResponseEntity<List<SparePartsDto>> getBrandId(@PathVariable Long id){
         List<SpareParts> spareParts = parts_motorTypeRepository.findAllSparePartsByMotorTypeId(id);
@@ -87,6 +95,8 @@ public class SparePartsController {
 //        List<SpareParts> spareParts = sparePartsRepository.findAllBySparePartsTypeId(id);
 //        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(java.util.stream.Collectors.toList()));
 //    }
+
+
     @GetMapping("/get-spare-parts-by-spare-parts-type-id={id}/exclude={excludeId}")
     public ResponseEntity<List<SparePartsDto>> getSparePartsBySparePartsTypeId(@PathVariable Long id, @PathVariable Long excludeId){
         List<SpareParts> spareParts = sparePartsRepository.findAllBySparePartsTypeId(id);
@@ -232,5 +242,111 @@ public class SparePartsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+
+    @GetMapping("/get-spare-parts-by-search={search}")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsBySearch(@PathVariable String search){
+        List<SpareParts> spareParts = sparePartsRepository.findSparePartsByNameContaining(search);
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/get-spare-parts-by-filter")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsByFilter(
+            @RequestParam(value = "brandId", required = false) Long brandId,
+            @RequestParam(value = "typeId", required = false) Long typeId,
+            @RequestParam(value = "motorTypeId", required = false) Long motorTypeId,
+            @RequestParam(value = "minPrice", required = false) Float minPrice,
+            @RequestParam(value = "maxPrice", required = false) Float maxPrice) {
+
+        List<SpareParts> spareParts = sparePartsRepository.findAll();
+
+        if (brandId != null && !brandId.equals("")) {
+            spareParts = spareParts.stream()
+                    .filter(sparePart -> sparePart.getBrandParts().getId().equals(brandId))
+                    .collect(Collectors.toList());
+        }
+
+        if (typeId != null && !typeId.equals("")) {
+            spareParts = spareParts.stream()
+                    .filter(sparePart -> sparePart.getSparePartsType().getId().equals(typeId))
+                    .collect(Collectors.toList());
+        }
+
+        if (motorTypeId != null && !motorTypeId.equals("")) {
+            spareParts = spareParts.stream()
+                    .filter(sparePart -> parts_motorTypeRepository.findAllMotorTypesBySparePartsId(sparePart.getId())
+                            .stream()
+                            .anyMatch(motor -> motor.getId().equals(motorTypeId)))
+                    .collect(Collectors.toList());
+        }
+
+        if (minPrice != null) {
+            spareParts = spareParts.stream()
+                    .filter(sparePart -> sparePart.getUnitPrice() >= minPrice)
+                    .collect(Collectors.toList());
+        }
+
+        if (maxPrice != null) {
+            spareParts = spareParts.stream()
+                    .filter(sparePart -> sparePart.getUnitPrice() <= maxPrice)
+                    .collect(Collectors.toList());
+        }
+
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+
+    //get spare parts by brand id
+    @GetMapping("/get-spare-parts-by-brand-id={id}")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsByBrandId(@PathVariable Long id){
+        List<SpareParts> spareParts = sparePartsRepository.findSparePartsByBrandPartsId(id);
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+    //get spare parts by type id
+    @GetMapping("/get-spare-parts-by-type-id={id}")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsByTypeId(@PathVariable Long id){
+        List<SpareParts> spareParts = sparePartsRepository.findSparePartsBySparePartsTypeId(id);
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+    //get spare parts by motor type id
+    @GetMapping("/get-spare-parts-by-motor-type-id={id}")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsByMotorTypeId(@PathVariable Long id){
+        List<SpareParts> spareParts = parts_motorTypeRepository.findAllSparePartsByMotorTypeId(id);
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/get-spare-parts-by-name")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsByName(@RequestParam(value = "name", required = false) String name){
+        List<SpareParts> spareParts;
+        System.out.println("name: "+name);
+        if (name == null || name.isEmpty()) {
+            spareParts = sparePartsRepository.findAll();
+        } else {
+            spareParts = sparePartsRepository.findSparePartsByNameContaining(name);
+        }
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+
+//...
+
+    @GetMapping("/get-spare-parts-by-ids")
+    public ResponseEntity<List<SparePartsDto>> getSparePartsByIds(@RequestParam(value = "ids", required = false) List<Long> ids){
+        List<SpareParts> spareParts;
+        System.out.println("ids: "+ids);
+        if (ids == null || ids.isEmpty()) {
+            spareParts = sparePartsRepository.findAll();
+            Collections.shuffle(spareParts);  // Xáo trộn vị trí các phần tử
+        } else {
+            spareParts = sparePartsRepository.findAllById(ids);
+        }
+        return ResponseEntity.ok(spareParts.stream().map(mapperSpareParts::mapTo).collect(Collectors.toList()));
+    }
+
+
+
+
 
 }

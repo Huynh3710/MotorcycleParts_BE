@@ -6,16 +6,17 @@ import com.motorcycleparts.motorcycleparts_master.model.*;
 import com.motorcycleparts.motorcycleparts_master.model.user.Role;
 
 import com.motorcycleparts.motorcycleparts_master.repository.*;
+import com.motorcycleparts.motorcycleparts_master.token.Token;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @SpringBootApplication
 @EnableScheduling
@@ -36,143 +37,173 @@ public class MotorcyclePartsMainClass {
 			Parts_MotorTypeRepository parts_motorTypeRepository,
 			ReviewsRepository reviewsRepository,
 			CustomerRepository customerRepository,
-			DiscountRepository discountRepository
-	){
-	return args -> {
-		var admin = RegisterRequest.builder()
-				.firstName("admin")
-				.lastName("admin")
-				.email("admin@admin.com")
-				.password("admin")
-				.role(Role.ADMIN).build();
-		System.out.println("Admin token: "+authenticationService.register(admin).getAccess_token());
+			DiscountRepository discountRepository,
+			TokenRepository tokenRepository
+	) {
+		return args -> {
+			var admin = RegisterRequest.builder()
+					.firstName("admin")
+					.lastName("admin")
+					.email("admin@admin.com")
+					.password("admin")
+					.role(Role.ADMIN).build();
+			System.out.println("Admin token: " + authenticationService.register(admin).getAccess_token());
 
-		var customer = RegisterRequest.builder()
-				.firstName("user")
-				.lastName("user")
-				.email("huynhname32@gmail.com")
-				.password("1")
-				.build();
-		authenticationService.register(customer);
+//		var customer = RegisterRequest.builder()
+//				.firstName("user")
+//				.lastName("user")
+//				.email("huynhname32@gmail.com")
+//				.password("1")
+//				.build();
+//		authenticationService.register(customer);
 
-//			BrandParts b = BrandParts.builder().name("Profender X  Series").build();
-//			brandPartsRepository.save(b);
-//			BrandParts b1 = BrandParts.builder().name("Deli").build();
-//			brandPartsRepository.save(b1);
-//			BrandParts b2 = BrandParts.builder().name("Profender X  Series 1").build();
-//			brandPartsRepository.save(b2);
-//			BrandParts b3 = BrandParts.builder().name("Profender X  Series 2").build();
-//			brandPartsRepository.save(b3);
-//			BrandParts b4 = BrandParts.builder().name("Profender X  Series 3").build();
-//			brandPartsRepository.save(b4);
+//		// Mảng nội dung đánh giá tích cực
+//		String[] reviewContents = {"Sản phẩm chất lượng, giá cả hợp lý", "Rất hài lòng với sản phẩm", "Sản phẩm tuyệt vời, sẽ mua lại", "Giá trị tốt cho tiền", "Chất lượng sản phẩm vượt trội", "Sản phẩm đáng mua", "Rất hài lòng với dịch vụ", "Giao hàng nhanh chóng", "Sản phẩm đúng như mô tả", "Sẽ giới thiệu cho bạn bè"};
 //
-//			SparePartsType spt = SparePartsType.builder().name("Căm xe").build();
-//			sparePartsTypeRepository.save(spt);
-//			SparePartsType spt1 = SparePartsType.builder().name("Vỏ xe").build();
-//			sparePartsTypeRepository.save(spt1);
-//			SparePartsType spt2 = SparePartsType.builder().name("Phuộc xe").build();
-//			sparePartsTypeRepository.save(spt2);
-//			SparePartsType spt3 = SparePartsType.builder().name("Yên xe").build();
-//			sparePartsTypeRepository.save(spt3);
-//			SparePartsType spt4 = SparePartsType.builder().name("Pô xe").build();
-//			sparePartsTypeRepository.save(spt4);
-//			SparePartsType spt5 = SparePartsType.builder().name("Thắng xe").build();
-//			sparePartsTypeRepository.save(spt5);
+//// Mảng tên đầu
+//		String[] firstName = {"Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý", "Đào", "Đinh"};
+//// Mảng tên cuối
+//		String[] lastName = {"Văn", "Trung", "Hồng", "Hải", "Lan", "Huy", "Hùng", "Hưng", "Hoa", "Hạnh", "Hương", "Huyền", "Thắm", "Trinh", "Ngọc", "Thảo"};
 //
+//		Random rand = new Random();
+//		Set<String> usedEmails = new HashSet<>();
 //
-//			SpareParts spareParts = SpareParts.builder()
-//					.brandParts(b)
-//					.sparePartsType(spt)
-//					.inventory(121214)
-//					.name("Phuộc Profender X Series cho SHVN")
-//					.sellNumber(1244)
-//					.wattage(null)
-//					.voltage(null)
-//					.start(4.0f)
-//					.size("100/90-10")
-//					.averageLifespan(3.5f)
-//					.year(2021)
-//					.origin("Thái Lan")
-//					.unitPrice(319.9f)
-//					.warranty(1.5f)
-//					.iso("ISO 9001:2015")
+//		for (int i = 0; i < 200; i++) {
+//			String first = firstName[rand.nextInt(firstName.length)];
+//			String last = lastName[rand.nextInt(lastName.length)];
+//			String email = first + last + "@gmail.com";
 //
-//					//phuộc lò xo
-//					.type("Phuộc lồng")
-//					.image("C:\\Users\\huynh\\OneDrive\\Hình ảnh\\Acer\\Acer_Wallpaper_02_3840x2400.jpg")
-//					.weight(2.5f)
-//					.description("Phuộc Profender X Series cho PCX 160 hàng chính hãng Profender sản xuất tại Thái Lan." +
-//							" Phuộc Profender X Series cho Honda PCX là dòng phuộc có bình dầu phụ, tặng kèm 2 loxo phụ, 2 nút tăng chỉnh rebound và độ nhún, chân phuộc 16 nấc hiển thị số rõ ràng , " +
-//							"dễ tăng chỉnh có thể giúp bạn tùy chỉnh khi đi phố, khi chở nặng...").build();
+//			// Kiểm tra xem email đã được sử dụng chưa
+//			while (usedEmails.contains(email)) {
+//				first = firstName[rand.nextInt(firstName.length)];
+//				last = lastName[rand.nextInt(lastName.length)];
+//				email = first + last + "@gmail.com";
+//			}
 //
-//			sparePartsRepository.save(spareParts);
+//			// Thêm email vào tập hợp các email đã sử dụng
+//			usedEmails.add(email);
+//
+//			// Tạo số điện thoại ngẫu nhiên gồm 10 chữ số
+//			// Tạo số điện thoại ngẫu nhiên gồm 10 chữ số, bắt đầu bằng số 0
+//			String phoneNumber = "0" + String.format("%09d", rand.nextInt(1_000_000_000));
 //
 //
-//			SpareParts spareParts1 = SpareParts.builder()
-//					.brandParts(b1)
-//					.sparePartsType(spt1)
-//					.inventory(121214)
-//					.name("Vỏ Deli 100/90-10 Urban Grip")
-//					.sellNumber(1244)
-//					.unitPrice(319.9f)
-//					.year(2020)
-//					.start(4.5f)
-//					.origin("Indonesia")
-//					.averageLifespan(2.5f)
-//					.size("100/90-10")
-//					.warranty(1.5f)
-//					.weight(2.5f)
-//					.type("Vỏ ruột đặc")
-//					.iso("ISO 9001:2015")
-//					.voltage(null)
-//					.wattage(null)
-//					.image("C:\\Users\\huynh\\OneDrive\\Hình ảnh\\Acer\\Acer_Wallpaper_02_3840x2400.jpg")
-//					.description("Vỏ xe Deli 100/90-10 Urban Grip mã gai SC-109, Deli là thương hiệu mẹ của vỏ xe Swallow sản xuất tại Indonesia đã quen thuộc tại Việt Nam," +
-//							"trước giờ chủ yếu làm vỏ xe du lịch, xe đạp, xe địa hình...nay đã có vỏ dành cho xe 2 bánh").build();
-//			sparePartsRepository.save(spareParts1);
-//
-			BrandMotor brandMotor = BrandMotor.builder().name("Honda").build();
-			brandMotorRepository.save(brandMotor);
-			BrandMotor brandMotor1 = BrandMotor.builder().name("Yamaha").build();
-			brandMotorRepository.save(brandMotor1);
-//			BrandMotor brandMotor2 = BrandMotor.builder().name("Honda2").build();
-//			brandMotorRepository.save(brandMotor2);
-//			BrandMotor brandMotor3 = BrandMotor.builder().name("Honda3").build();
-//			brandMotorRepository.save(brandMotor3);
-//
-//
-//			MotorType motorType = MotorType.builder().name("SH").carYear("2021").brandMotor(brandMotor).build();
-//			motorTypeRepository.save(motorType);
-//			MotorType motorType1 = MotorType.builder().name("Future").carYear("2017").brandMotor(brandMotor).build();
-//			motorTypeRepository.save(motorType1);
-//
-//
-//			Parts_MotorType parts_motorType = Parts_MotorType.builder()
-//					.motorType(motorTypeRepository.findById(1L).get())
-//					.spareParts(sparePartsRepository.findById(2L).get())
+//			var customer = RegisterRequest.builder()
+//					.firstName(first)
+//					.lastName(last)
+//					.email(email)
+//					.sex("Male")
+//					.phoneNumber(phoneNumber)
+//					.password("1")
 //					.build();
-//			parts_motorTypeRepository.save(parts_motorType);
+//			authenticationService.register(customer);
 //
-//			Parts_MotorType parts_motorType1 = Parts_MotorType.builder()
-//					.motorType(motorTypeRepository.findById(1L).get())
-//					.spareParts(sparePartsRepository.findById(1L).get())
-//					.build();
-//			parts_motorTypeRepository.save(parts_motorType1);
+//			// Tạo 10 đánh giá cho mỗi người dùng
+//			Set<Long> reviewedProducts = new HashSet<>();
+//			for (int j = 0; j < 10; j++) {
+//				long productId;
 //
+//				// Chọn sản phẩm ngẫu nhiên mà người dùng chưa đánh giá
+//				do {
+//					productId = rand.nextInt(37) + 1;
+//				} while (reviewedProducts.contains(productId));
 //
-//			Parts_MotorType parts_motorType2 = Parts_MotorType.builder()
-//					.motorType(motorTypeRepository.findById(2L).get())
-//					.spareParts(sparePartsRepository.findById(1L).get())
-//					.build();
-//			parts_motorTypeRepository.save(parts_motorType2);
+//				// Thêm sản phẩm vào tập hợp các sản phẩm đã đánh giá
+//				reviewedProducts.add(productId);
+//
+//				// Tạo đánh giá ngẫu nhiên
+//				String content = reviewContents[rand.nextInt(reviewContents.length)];
+//				int rating = rand.nextInt(5) + 1; // Tạo số sao ngẫu nhiên từ 1 đến 5
+//				Reviews reviews = Reviews.builder()
+//						.content(content)
+//						.rating(rating)
+//						.customer(customerRepository.findById((long) i+1).get())
+//						.date(null) // Sử dụng ngày hiện tại
+//						.spareParts(sparePartsRepository.findById(productId).get())
+//						.build(); // Thêm build() để tạo đối tượng từ builder
+//				reviewsRepository.save(reviews); // Lưu đối tượng vào cơ sở dữ liệu
+//			}
+//		}
 
-//			var manager = RegisterRequest.builder()
-////					.firstName("manager")
-////					.lastName("manager")
-////					.email("manager@gmail.com")
-////					.password("password")
-////					.role(Role.MANAGER).build();
-////			System.out.println("manager token: "+authenticationService.register(manager).getAccess_token());
+//		// Mảng nội dung đánh giá tích cực
+//		String[] reviewContents = {"Sản phẩm chất lượng, giá cả hợp lý", "Rất hài lòng với sản phẩm", "Sản phẩm tuyệt vời, sẽ mua lại", "Giá trị tốt cho tiền", "Chất lượng sản phẩm vượt trội", "Sản phẩm đáng mua", "Rất hài lòng với dịch vụ", "Giao hàng nhanh chóng", "Sản phẩm đúng như mô tả", "Sẽ giới thiệu cho bạn bè"};
+//
+//		// Mảng tên đầu
+//		String[] firstName = {"Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý", "Đào", "Đinh"};
+//		// Mảng tên cuối
+//		String[] lastName = {"Văn", "Trung", "Hồng", "Hải", "Lan", "Huy", "Hùng", "Hưng", "Hoa", "Hạnh", "Hương", "Huyền", "Thắm", "Trinh", "Ngọc", "Thảo"};
+//
+//		Random rand = new Random();
+//		Set<String> usedEmails = new HashSet<>();
+//
+//		for (int i = 0; i < 200; i++) {
+//			String first = firstName[rand.nextInt(firstName.length)];
+//			String last = lastName[rand.nextInt(lastName.length)];
+//
+//			// Loại bỏ dấu tiếng Việt và chuyển đổi thành chữ thường
+//			String email = removeAccent(first.toLowerCase()) + removeAccent(last.toLowerCase()) + "@gmail.com";
+//
+//			// Kiểm tra xem email đã được sử dụng chưa
+//			while (usedEmails.contains(email)) {
+//				first = firstName[rand.nextInt(firstName.length)];
+//				last = lastName[rand.nextInt(lastName.length)];
+//				email = removeAccent(first.toLowerCase()) + removeAccent(last.toLowerCase()) + "@gmail.com";
+//			}
+//
+//			// Thêm email vào tập hợp các email đã sử dụng
+//			usedEmails.add(email);
+//
+//			// Tạo số điện thoại ngẫu nhiên gồm 10 chữ số
+//			// Tạo số điện thoại ngẫu nhiên gồm 10 chữ số, bắt đầu bằng số 0
+//			String phoneNumber = "0" + String.format("%09d", rand.nextInt(1_000_000_000));
+//
+//
+//			var customer = RegisterRequest.builder()
+//					.firstName(first)
+//					.lastName(last)
+//					.email(email.toLowerCase()) // Viết email thành chữ thường
+//					.sex("male") // Giới tính viết thường
+//					.phoneNumber(phoneNumber)
+//					.password("1")
+//					.build();
+//			authenticationService.register(customer);
+//
+//			// Tạo 10 đánh giá cho mỗi người dùng
+//			Set<Long> reviewedProducts = new HashSet<>();
+//			for (int j = 0; j < 10; j++) {
+//				long productId;
+//
+//				// Chọn sản phẩm ngẫu nhiên mà người dùng chưa đánh giá
+//				do {
+//					productId = rand.nextInt(37) + 1;
+//				} while (reviewedProducts.contains(productId));
+//
+//				// Thêm sản phẩm vào tập hợp các sản phẩm đã đánh giá
+//				reviewedProducts.add(productId);
+//
+//				// Tạo đánh giá ngẫu nhiên
+//				String content = reviewContents[rand.nextInt(reviewContents.length)];
+//				int rating = rand.nextInt(5) + 1; // Tạo số sao ngẫu nhiên từ 1 đến 5
+//				Date currentDate = new Date(); // Lấy ngày hiện tại
+//
+//				Reviews reviews = Reviews.builder()
+//						.content(content)
+//						.rating(rating)
+//						.customer(customerRepository.findById((long) i + 1).get())
+//						.date(currentDate) // Sử dụng ngày hiện tại
+//						.spareParts(sparePartsRepository.findById(productId).get())
+//						.build();
+//				reviewsRepository.save(reviews); // Lưu đối tượng vào cơ sở dữ liệu
+//			}
+//		}
+//	};
+//	}
+//
+//	// Hàm loại bỏ dấu tiếng Việt
+//	public static String removeAccent(String s) {
+//		String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+//		return temp.replaceAll("[^\\p{ASCII}]", "");
+//	}
 
 
 //			for(int i = 1; i <= 20; i++) {
@@ -186,28 +217,9 @@ public class MotorcyclePartsMainClass {
 //				reviewsRepository.save(reviews); // Lưu đối tượng vào cơ sở dữ liệu
 //			}
 
-//			Discount discount = Discount.builder()
-//				.code("DISCOUNT_1")
-//				.name("Discount 1")
-//				.description("Discount 1")
-//				.discount(10)
-////				.spareParts(List.of(sparePartsRepository.findById(1L).get()))
-//				.startDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
-//				.endDate(Date.from(LocalDate.now().plusDays(10).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-//				.build();
-//			discountRepository.save(discount);
-//
-//			Discount discount1 = Discount.builder()
-//				.code("DISCOUNT_2")
-//				.name("Discount 2")
-//				.description("Discount 2")
-//				.discount(20)
-////				.spareParts(List.of(sparePartsRepository.findById(2L).get()))
-//				.startDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
-//				.endDate(Date.from(LocalDate.now().plusDays(10).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-//				.build();
-//			discountRepository.save(discount1);
 
-	};
+		};
 	}
-}
+	}
+
+

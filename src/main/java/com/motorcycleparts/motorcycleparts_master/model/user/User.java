@@ -7,10 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -31,6 +33,11 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String phoneNumber;
     private String password;
+
+    private Boolean isLocked = false;
+    @CreationTimestamp
+    private Date creationDate;
+
 //    private String sex;
     @Column(length = 10000)
 //    private String avatar;

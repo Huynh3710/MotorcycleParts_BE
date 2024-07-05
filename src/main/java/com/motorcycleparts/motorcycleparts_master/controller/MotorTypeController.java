@@ -164,4 +164,29 @@ public class MotorTypeController {
         }
     }
 
+    // search motor type by name
+//    @GetMapping("/search-motor-type-by-name/{keyword}")
+//    public ResponseEntity<List<MotorType>> searchMotorTypeByName(@PathVariable("keyword") String keyword) {
+//       List<MotorType> motorTypes;
+//        System.out.println("keyword: " + keyword);
+//        if (keyword == null || keyword.isEmpty()) {
+//            motorTypes = motorTypeRepository.findAll();
+//        } else {
+//            motorTypes = motorTypeRepository.findMotorTypeByNameContaining(keyword);
+//        }
+//        return ResponseEntity.ok(motorTypes);
+//    }
+    @GetMapping("/search-motor-type-by-name")
+    public ResponseEntity<List<MotorType>> searchMotorTypeByName(@RequestParam(value = "keyword", required = false) String keyword) {
+        List<MotorType> motorTypes;
+        System.out.println("keyword: " + keyword);
+        if (keyword == null || keyword.isEmpty()) {
+            motorTypes = motorTypeRepository.findAll();
+        } else {
+            motorTypes = motorTypeRepository.findMotorTypeByNameContaining(keyword);
+        }
+        return ResponseEntity.ok(motorTypes);
+    }
+
+
 }

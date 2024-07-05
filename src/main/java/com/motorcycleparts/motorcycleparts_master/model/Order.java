@@ -21,7 +21,7 @@ public class Order {
     private Long id;
     private Date orderDate;
     private double amountPrice;
-    private float shipping;
+    private Double shipping;
     private String orderCode;
     private String captureId;
     private Boolean tempStatus;
@@ -44,4 +44,6 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
+
+
 }

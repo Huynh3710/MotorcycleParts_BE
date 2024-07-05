@@ -345,6 +345,31 @@ public class SparePartsTypeController {
         return imagePath;
     }
 
+    //search spare parts type by name
+//    @GetMapping("/search-spare-parts-type-by-name/{name}")
+//    public ResponseEntity<List<SparePartsType>> searchSparePartsTypeByName(@PathVariable("name") String name) {
+//        List<SparePartsType> sparePartsTypes;
+//        if (name == null || name.isEmpty()) {
+//            sparePartsTypes = sparePartsTypeRepository.findAll();
+//        } else {
+//            sparePartsTypes = sparePartsTypeRepository.findSparePartsTypeByNameContaining(name);
+//        }
+//        return ResponseEntity.ok(sparePartsTypes);
+//    }
+    @GetMapping("/search-spare-parts-type-by-name")
+    public ResponseEntity<List<SparePartsType>> searchSparePartsTypeByName(@RequestParam(value = "name", required = false) String name) {
+        List<SparePartsType> sparePartsTypes;
+        System.out.println("NameType: " + name);
+        if (name == null || name.isEmpty()) {
+            sparePartsTypes = sparePartsTypeRepository.findAll();
+        } else {
+            sparePartsTypes = sparePartsTypeRepository.findSparePartsTypeByNameContaining(name);
+        }
+        return ResponseEntity.ok(sparePartsTypes);
+    }
+
+
+
 }
 
 
